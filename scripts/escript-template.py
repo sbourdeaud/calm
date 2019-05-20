@@ -23,7 +23,7 @@ api_server_port = "443" #this is the TCP port used to access the API server
 api_server_endpoint = "/apis/batch/v1/" #this is the address of the API endpoint
 
 # Form method, url and headers for the API call
-url = "https://" + api_server + ":" + api_server_port + api_server_endpoint #this is the url which will be used to make the API call
+url = "https://{}:{}{}".format(api_server,api_server_port,api_server_endpoint) #this is the url which will be used to make the API call
 headers = {'Content-Type': 'application/json', 'Accept': 'application/json'} #those are the headers which will be used to make the API call
 method = "POST" #this is the method which will be used for the API call
 
