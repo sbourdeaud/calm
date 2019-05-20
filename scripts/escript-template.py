@@ -29,75 +29,9 @@ method = "POST" #this is the method which will be used for the API call
 
 # Compose the json paylod
 payload = {
-  "apiVersion": "batch/v1",
-  "kind": "Job",
-  "metadata": {
-    "name": "oscar-django-migrations-@@{calm_application_uuid}@@",
-    "labels": {
-      "app": "django",
-      "component": "oscar",
-      "tier": "frontend"
-    }
-  },
-  "spec": {
-    "template": {
-      "metadata": {
-        "labels": {
-          "app": "django",
-          "component": "oscar",
-          "tier": "frontend"
-        }
-      },
-      "spec": {
-        "containers": [
-          {
-            "name": "django",
-            "image": "michaelatnutanix/oscar_jet:latest",
-            "imagePullPolicy": "Always",
-            "command": [
-              "/bin/bash",
-              "migrate.sh"
-            ],
-            "env": [
-              {
-                "name": "DATABASE_USER",
-                "value": "postgres"
-              },
-              {
-                "name": "DATABASE_PASSWORD",
-                "value": "@@{db_password}@@"
-              },
-              {
-                "name": "DATABASE_HOST",
-                "value": "@@{Era.DB_SERVER_IP}@@"
-              },
-              {
-                "name": "DATABASE_NAME",
-                "value": "@@{Era.DB_NAME}@@"
-              },
-              {
-                "name": "ACCESS_KEY",
-                "value": "@@{buckets_creds.username}@@"
-              },
-              {
-                "name": "SECRET_ACCESS_KEY",
-                "value": "@@{buckets_creds.secret}@@"
-              },
-              {
-                "name": "STATIC_BUCKET",
-                "value": "@@{buckets_name}@@"
-              },
-              {
-                "name": "S3_ENDPOINT_URL",
-                "value": "http://@@{buckets_ip}@@:7200/"
-              }
-            ]
-          }
-        ],
-        "restartPolicy": "Never"
-      }
-    },
-    "backoffLimit": 5
+  "example": "example",
+  "example": {
+    "example": "example"
   }
 }
 
