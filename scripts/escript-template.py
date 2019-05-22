@@ -59,6 +59,7 @@ payload = {
 
 # region make api call
 # make the API call and capture the results in the variable called "resp"
+print("Making a {} API call to {}".format(method, url))
 resp = urlreq(
     url, verb=method, auth='BASIC', 
     user=username, passwd=username_secret, 
@@ -70,16 +71,18 @@ resp = urlreq(
 # deal with the result/response
 if resp.ok:
     # print the content of the response
-    print json.dumps(
+    print(json.dumps(
         json.loads(resp.content),
         indent=4
-    )
+    ))
     exit(0)
 else:
     # print the content of the response (which should have the error message)
-    print "Request failed", json.dumps(
+    print("Request failed", json.dumps(
         json.loads(resp.content),
         indent=4
-    )
+    ))
+    print("Headers: {}".format(headers))
+    print("Payload: {}".format(payload))
     exit(1)
 # endregion

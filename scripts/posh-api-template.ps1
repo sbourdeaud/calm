@@ -31,7 +31,6 @@
 $username = '@@{credname.username}@@'
 $username_secret = "@@{credname.secret}@@"
 $api_server = "@@{endpoint_ip}@@"
-$debug_flag = "@@{debug_flag}@@"
 #endregion
 
 #region prepare api call
@@ -66,10 +65,6 @@ $payload = (ConvertTo-Json $content -Depth 4) #this converts the payload to
 
 #region make api call
 try {
-    if ($debug_flag) {
-        Write-Host "$(Get-Date) [DEBUG] Headers: $headers"
-        Write-Host "$(Get-Date) [DEBUG] Payload: $payload"
-    }
     Write-Host "$(Get-Date) [INFO] Making a $method call to $url"
     # ! Get rid of -SkipCertificateCheck if you're using proper
     # ! certificates
@@ -78,7 +73,10 @@ try {
         -SslProtocol Tls12 -ErrorAction Stop
 }
 catch {
-    Throw "$(get-date) [ERROR] $($_.Exception.Message)"
+    $saved_error = $_.Exception.Message
+    Write-Host "$(Get-Date) [INFO] Headers: $headers"
+    Write-Host "$(Get-Date) [INFO] Payload: $payload"
+    Throw "$(get-date) [ERROR] $saved_error"
 }
 finally {
     #add any last words here; this gets processed no matter what
