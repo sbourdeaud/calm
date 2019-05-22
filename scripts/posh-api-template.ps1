@@ -1,5 +1,5 @@
 #region headers
-# posh-api-template v20190521 / stephane.bourdeaud@nutanix.com
+# posh-api-template v20190522 / stephane.bourdeaud@nutanix.com
 # ! Meant to be edited in VSCode w/ the BetterComments extension installed
 # ! Do NOT delete comments from this script!
 

@@ -1,5 +1,5 @@
 # region headers
-# escript-template v20190520 / stephane.bourdeaud@nutanix.com
+# escript-template v20190522 / stephane.bourdeaud@nutanix.com
 # ! Meant to be edited in VSCode w/ the BetterComments extension installed
 # ! Do NOT delete comments from this script!
 
