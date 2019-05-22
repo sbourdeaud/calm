@@ -1,6 +1,6 @@
 #region headers
     # posh-api-template v20190521 / stephane.bourdeaud@nutanix.com
-    # ! Meant to be edited in VSCode with the BetterComments extension installed
+    # ! Meant to be edited in VSCode w/ the BetterComments extension installed
     # ! Do NOT delete comments from this script!
 
     # * Conventions:
@@ -46,9 +46,7 @@
         "Accept"="application/json"
     } #those are the headers which will be used to make the API call
     $method = "POST" #this is the method which will be used for the API call
-#endregion
 
-#region prepare the json payload
     $content = @{
         property1="value";
         property2=@{
