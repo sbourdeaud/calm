@@ -43,7 +43,7 @@ url = "https://{}:{}{}".format(
     api_server_endpoint
     )
 headers = {
-    'Content-Type': 'application/json', 
+    'Content-Type': 'application/json',
     'Accept': 'application/json'
     }
 method = "POST"
@@ -63,11 +63,11 @@ print("Making a {} API call to {}".format(method, url))
 # ! Get rid of verify=False if you're using proper certificates
 resp = urlreq(
     url,
-    verb=method, 
-    auth='BASIC', 
-    user=username, 
-    passwd=username_secret, 
-    params=json.dumps(payload), 
+    verb=method,
+    auth='BASIC',
+    user=username,
+    passwd=username_secret,
+    params=json.dumps(payload),
     headers=headers,
     verify=False
     )
