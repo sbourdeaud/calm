@@ -66,8 +66,7 @@ $payload = (ConvertTo-Json $content -Depth 4) #this converts the payload to
 #region make api call
 try {
     Write-Host "$(Get-Date) [INFO] Making a $method call to $url"
-    # ! Get rid of -SkipCertificateCheck if you're using proper
-    # ! certificates
+    # ! Get rid of -SkipCertificateCheck if you're using proper certificates
     $resp = Invoke-RestMethod -Credential $cred -Method $method -Uri `
         $url -Headers $headers -Body $payload -SkipCertificateCheck `
         -SslProtocol Tls12 -ErrorAction Stop

@@ -60,10 +60,16 @@ payload = {
 # region make api call
 # make the API call and capture the results in the variable called "resp"
 print("Making a {} API call to {}".format(method, url))
+# ! Get rid of verify=False if you're using proper certificates
 resp = urlreq(
-    url, verb=method, auth='BASIC', 
-    user=username, passwd=username_secret, 
-    params=json.dumps(payload), headers=headers
+    url,
+    verb=method, 
+    auth='BASIC', 
+    user=username, 
+    passwd=username_secret, 
+    params=json.dumps(payload), 
+    headers=headers,
+    verify=False
     )
 
 # ! You should not have to change the code below, unless you are passing on
