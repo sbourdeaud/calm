@@ -31,6 +31,7 @@
 $username = '@@{credname.username}@@'
 $username_secret = "@@{credname.secret}@@"
 $api_server = "@@{endpoint_ip}@@"
+$debug_flag = "@@{debug_flag}@@"
 #endregion
 
 #region prepare api call
@@ -65,18 +66,22 @@ $payload = (ConvertTo-Json $content -Depth 4) #this converts the payload to
 
 #region make api call
 try {
+    if ($debug_flag) {
+        Write-Host "$(Get-Date) [DEBUG] Headers: $headers"
+        Write-Host "$(Get-Date) [DEBUG] Payload: $payload"
+    }
+    Write-Host "$(Get-Date) [INFO] Making a $method call to $url"
     # ! Get rid of -SkipCertificateCheck if you're using proper
     # ! certificates
     $resp = Invoke-RestMethod -Credential $cred -Method $method -Uri `
         $url -Headers $headers -Body $payload -SkipCertificateCheck `
         -SslProtocol Tls12 -ErrorAction Stop
-    Write-Host $resp.content
 }
 catch {
-    ThrowError -ExceptionMessage "$(get-date) [ERROR] `
-        $($_.Exception.Message)"
+    Throw "$(get-date) [ERROR] $($_.Exception.Message)"
 }
 finally {
     #add any last words here; this gets processed no matter what
+    Write-Host "$(Get-Date) [INFO] Response: $($resp.content)"
 }
 #endregion
