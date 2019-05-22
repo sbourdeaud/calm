@@ -4,6 +4,9 @@
 # ! Do NOT delete comments from this script!
 
 # * Conventions:
+# * Aiming for the the following standards:
+# * https://github.com/PoshCode/PowerShellPracticeAndStyle
+# * Otherwise use PEP8 when in doubt (https://pep8.org/)
 # 1. use all lower case for variable names.
 # 2. when composing variable names, use underscore to separate words. 
 #    Exp: username_secret. Use this same convention in Calm.
@@ -13,6 +16,8 @@
 # 5. when saving your script, name it as the task name appears in Calm,
 #    using the following convention: NameOfIntegrationPoint-Verb-Text.ps1
 # 6. use double quotes first, then single quotes.
+# 7. Try your best and keep line length under 80 characters, even though
+#    it makes your eyes bleed.
 
 # TODO Fill in this section with your information
 # author:    <your email address here>
