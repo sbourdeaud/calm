@@ -19,23 +19,23 @@
 #    it makes your eyes bleed.
 
 # TODO Fill in this section with your information
-# author:    <your email address here>
-# version:   <date / notes>
-# task_name: <enter the name of the task this script is for as it appears
-# in your blueprint>
+# author:    stephane.bourdeaud@nutanix.com
+# version:   23/05/2019: initial tested version (Calm 2.6.0.3)
+# task_name: PcVmsListPost
 # endregion
 
 # region capture Calm variables
 # * Capture variables here. This makes sure Calm macros are not referenced
 # * anywhere else in order to improve maintainability.
-username = '@@{credname.username}@@'
-username_secret = "@@{credname.secret}@@"
-api_server = "@@{endpoint_ip}@@"
+username = '@@{prism_api_user.username}@@'
+username_secret = "@@{prism_api_user.secret}@@"
+api_server = "@@{prism_ip}@@"
 # endregion
 
 # region prepare api call
-api_server_port = "443"
-api_server_endpoint = "/apis/batch/v1/"
+# Form method, url and headers for the API call
+api_server_port = "9440"
+api_server_endpoint = "/api/nutanix/v3/vms/list"
 url = "https://{}:{}{}".format(
     api_server,
     api_server_port,
@@ -49,10 +49,8 @@ headers = {
 
 # Compose the json payload
 payload = {
-    "example": "example",
-    "example": {
-        "example": "example"
-    }
+    "kind": "vm",
+    "offset": 0
 }
 # endregion
 
@@ -69,7 +67,7 @@ resp = urlreq(
     params=json.dumps(payload),
     headers=headers,
     verify=False
-)
+    )
 
 # ! You should not have to change the code below, unless you are passing on
 # ! a variable in which case you will need to print it under "if resp.ok"
