@@ -20,22 +20,22 @@
 #    it makes your eyes bleed.
 
 # TODO Fill in this section with your information
-# author:    <your email address here>
-# version:   <date / notes>
-# task_name: <enter the name of the task as it appears in your bp>
+# author:    stephane.bourdeaud@nutanix.com
+# version:   23/05/2019: initial tested version (Calm 2.6.0.3)
+# task_name: PcVmsListPost
 #endregion
 
 #region capture Calm variables
 # * Capture variables here. This makes sure Calm macros are not referenced 
 # * anywhere else in order to improve maintainability.
-$username = '@@{credname.username}@@'
-$username_secret = "@@{credname.secret}@@"
-$api_server = "@@{endpoint_ip}@@"
+$username = '@@{prism_api_user.username}@@'
+$username_secret = "@@{prism_api_user.secret}@@"
+$api_server = "@@{prism_ip}@@"
 #endregion
 
 #region prepare api call
-$api_server_port = "443"
-$api_server_endpoint = "/apis/batch/v1/"
+$api_server_port = "9440"
+$api_server_endpoint = "/api/nutanix/v3/vms/list"
 $url = "https://{0}:{1}{2}" -f $api_server,$api_server_port, `
     $api_server_endpoint
 $method = "POST"
@@ -48,12 +48,8 @@ $headers = @{
 
 # this is used to capture the content of the payload
 $content = @{
-    property1="value";
-    property2=@{
-        property21="value";
-        property22="value"
-    };
-    property3="value"
+    kind="vm";
+    offset=0
 }
 $payload = (ConvertTo-Json $content -Depth 4)
 
@@ -91,7 +87,6 @@ if (-not ([System.Management.Automation.PSTypeName]'ServerCertificateValidationC
 }
 [ServerCertificateValidationCallback]::Ignore()
 
-
 # add Tls12 support
 Write-Host "$(Get-Date) [INFO] Adding Tls12 support"
 [Net.ServicePointManager]::SecurityProtocol = `
@@ -104,8 +99,7 @@ try {
     Write-Host "$(Get-Date) [INFO] Making a $method call to $url"
     $resp = Invoke-RestMethod -Method $method -Uri $url -Headers $headers `
         -Body $payload -ErrorAction Stop
-    Write-Host "$(Get-Date) [INFO] Response Metadata: $($resp.metadata `
-        | ConvertTo-Json)"
+    Write-Host "$(Get-Date) [INFO] Response Metadata: $($resp.metadata | ConvertTo-Json)"
     # response data will be an array in $resp.entities
     Write-Host "$(Get-Date) [INFO] Showing entities in response:"
     ForEach ($entity in $resp.entities) {
