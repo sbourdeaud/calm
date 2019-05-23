@@ -1,2 +1,2 @@
-# hal
-Private repository for HAL related work
+# calm
+Private repository for Calm related work
