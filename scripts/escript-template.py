@@ -13,7 +13,7 @@
 # 4. don't print secrets, including tokens. Favor authentication
 #    (login/logout) in each task.
 # 5. when saving your script, name it as the task name appears in Calm,
-#    using the following convention: NameOfIntegrationPoint-Verb-Text.py
+#    using the following convention: NameOfIntegrationPointAPIendpointMethod.py
 # 6. use double quotes first, then single quotes.
 # 7. Try your best and keep line length under 80 characters, even though
 #    it makes your eyes bleed.
