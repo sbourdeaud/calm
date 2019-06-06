@@ -76,7 +76,7 @@ resp = urlreq(
 if resp.ok:
     json_resp = json.loads(resp.content)
     print("Blueprint {} was launched successfully".format(blueprint_uuid))
-    print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
+    print("launch_request_id= {}".format(json_resp['status']['request_id']))
     exit(0)
 else:
     print("Request failed")

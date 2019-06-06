@@ -10,14 +10,15 @@
 # endregion
 
 # region capture Calm macros
-pc_ip = '@@{pc_ip}@@'
-username = '@@{pc_user.username}@@'
-username_secret = '@@{pc_user.secret}@@'
+pc_ip = "@@{pc_ip}@@"
+username = "@@{pc_user.username}@@"
+username_secret = "@@{pc_user.secret}@@"
 blueprint_uuid = "@@{blueprint_uuid}@@"
+application_profile_name = "@@{application_profile_name}@@"
+vm_hostname = "@@{name}@@"
 # endregion
 
 # region prepare variables
-vm_hostname = "vm_hostname"
 headers = {'content-type': 'application/json'}
 # endregion
 
