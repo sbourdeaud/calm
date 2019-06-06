@@ -8,18 +8,17 @@
 # endregion
 
 # region capture Calm variables
-username = '@@{pc.username}@@'
-username_secret = "@@{pc.secret}@@"
+username = '@@{pe.username}@@'
+username_secret = "@@{pe.secret}@@"
 nutanix_cluster_ip = "@@{nutanix_cluster_ip}@@"
-vm_name = "@@{name}@@"
+vm_uuid = "@@{vm_uuid}@@"
 protection_domain_name = "@@{protection_domain_name}@@"
 # endregion
 
 # region Add VM to Protection Domain
 api_server = nutanix_cluster_ip
 api_server_port = "9440"
-# https://10.48.70.29:9440/PrismGateway/services/rest/v2.0/protection_domains/steph-pfizer-test/protect_vms
-api_server_endpoint = "/api/nutanix/v3/clusters/list"
+api_server_endpoint = "/PrismGateway/services/rest/v2.0/protection_domains/{}/protect_vms".format(protection_domain_name)
 url = "https://{}:{}{}".format(
     api_server,
     api_server_port,
@@ -31,7 +30,9 @@ headers = {
     'Accept': 'application/json'
 }
 payload = {
-    "kind": "cluster"
+  "uuids": [
+    vm_uuid
+  ]
 }
 
 print("Making a {} API call to {}".format(method, url))
@@ -48,10 +49,7 @@ resp = urlreq(
 
 if resp.ok:
     print("Request was successful")
-    json_resp = json.loads(resp.content)
-    for cluster in json_resp['entities']:
-        if cluster['spec']['name'] == nutanix_cluster_name:
-            print("nutanix_cluster_ip=", cluster['spec']['resources']['network']['external_ip'])
+    print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
     exit(0)
 else:
     print("Request failed")
