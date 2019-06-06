@@ -5,8 +5,6 @@
 # task_name:      CalmGetAppProfileVars
 # description:    This script gets all the Application Profiles variable of the
 # specified blueprint.
-# TODO: add ability to specify the application profile (right now it only looks at the first one)
-# TODO: test
 # endregion
 
 # region capture Calm macros
@@ -47,8 +45,8 @@ if resp.ok:
             blueprint_app_profile_uuid = app_profile['uuid']
             blueprint_app_profile_variables = app_profile['variable_list']
 
-            print("blueprint_app_profile_uuid=", blueprint_app_profile_uuid)
-            print("blueprint_app_profile_variables=", blueprint_app_profile_variables)
+            print("blueprint_app_profile_uuid= {}".format(blueprint_app_profile_uuid))
+            print("blueprint_app_profile_variables= {}".format(json.dumps(blueprint_app_profile_variables)))
             exit(0)
         if blueprint_app_profile_uuid == "":
             print("Could not find application profile with name {} in blueprint {}".format(application_profile_name,blueprint_name))
