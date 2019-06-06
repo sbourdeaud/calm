@@ -1,8 +1,5 @@
-#region headers
-# posh-api-template v20190523 / stephane.bourdeaud@nutanix.com
+# region DELETE ME AFTER READING
 # ! Meant to be edited in VSCode w/ the BetterComments extension installed
-# ! Do NOT delete comments from this script!
-
 # * Conventions:
 # * Aiming for the the following standards:
 # * https://github.com/PoshCode/PowerShellPracticeAndStyle
@@ -18,12 +15,16 @@
 # 6. use double quotes first, then single quotes.
 # 7. Try your best and keep line length under 80 characters, even though
 #    it makes your eyes bleed.
+# endregion
 
+# region headers
+# posh-api-template v20190604 / stephane.bourdeaud@nutanix.com
 # TODO Fill in this section with your information
-# author:    <your email address here>
-# version:   <date / notes>
-# task_name: <enter the name of the task as it appears in your bp>
-#endregion
+# author:       <your email address here>
+# version:      <date / notes>
+# task_name:    <enter the name of the task as it appears in your bp>
+# description:  
+# endregion
 
 #region capture Calm variables
 # * Capture variables here. This makes sure Calm macros are not referenced 

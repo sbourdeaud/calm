@@ -19,7 +19,7 @@
 # 7. Try your best and keep line length under 80 characters, even though
 #    it makes your eyes bleed.
 
-# TODO Fill in this section with your information
+# TODO Deal with more than 20 returned entities
 # author:    stephane.bourdeaud@nutanix.com
 # version:   23/05/2019: initial tested version (Calm 2.6.0.3)
 # task_name: PcVmsListPost

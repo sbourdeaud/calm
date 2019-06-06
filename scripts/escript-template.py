@@ -1,7 +1,5 @@
-# region headers
-# escript-template v20190523 / stephane.bourdeaud@nutanix.com
+# region DELETE ME AFTER READING
 # ! Meant to be edited in VSCode w/ the BetterComments extension installed
-# ! Do NOT delete comments from this script!
 
 # * Conventions:
 # * Golden Rule: Adhere to https://pep8.org/ Anything listed below which is
@@ -17,12 +15,16 @@
 # 6. use double quotes first, then single quotes.
 # 7. Try your best and keep line length under 80 characters, even though
 #    it makes your eyes bleed.
+# endregion
 
+# region headers
+# escript-template v20190605 / stephane.bourdeaud@nutanix.com
 # TODO Fill in this section with your information
-# author:    <your email address here>
-# version:   <date / notes>
-# task_name: <enter the name of the task this script is for as it appears
+# * author:     <your email address here>
+# * version:    <date / notes>
+# task_name:    <enter the name of the task this script is for as it appears
 # in your blueprint>
+# description:  
 # endregion
 
 # region capture Calm variables
@@ -73,21 +75,17 @@ resp = urlreq(
 
 # ! You should not have to change the code below, unless you are passing on
 # ! a variable in which case you will need to print it under "if resp.ok"
+# ! example: print("calm_variable_name=", python_variable)
 # deal with the result/response
 if resp.ok:
-    # print the content of the response
-    print(json.dumps(
-        json.loads(resp.content),
-        indent=4
-    ))
+    print("Request was successful")
+    print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
     exit(0)
 else:
-    # print the content of the response (which should have the error message)
-    print("Request failed", json.dumps(
-        json.loads(resp.content),
-        indent=4
-    ))
+    print("Request failed")
     print("Headers: {}".format(headers))
-    print("Payload: {}".format(payload))
+    print("Payload: {}".format(json.dumps(payload)))
+    print('Status code: {}'.format(resp.status_code))
+    print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
     exit(1)
 # endregion

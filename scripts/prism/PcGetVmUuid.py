@@ -2,16 +2,15 @@
 # escript-template v20190605 / stephane.bourdeaud@nutanix.com
 # * author:     stephane.bourdeaud@nutanix.com, lukasz@nutanix.com
 # * version:    20190606
-# task_name:    PcVmsListPost
-# description:  Gets the list of VMs from Prism Central.
+# task_name:    PcGetVmUuid
+# description:  Gets the uuid of the specified VMs from Prism Central.
 # endregion
 
 # region capture Calm variables
-# * Capture variables here. This makes sure Calm macros are not referenced
-# * anywhere else in order to improve maintainability.
-username = '@@{pc.username}@@'
+username = "@@{pc.username}@@"
 username_secret = "@@{pc.secret}@@"
 api_server = "@@{pc_ip}@@"
+vm_name = "@@{vm_name}@@"
 # endregion
 
 # region prepare api call
@@ -54,8 +53,11 @@ resp = urlreq(
 # deal with the result/response
 if resp.ok:
     json_resp = json.loads(resp.content)
-    print("Printing results from {} to {}".format(json_resp['metadata']['offset'],json_resp['metadata']['length']))
-    print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
+    print("Processing results from {} to {}".format(json_resp['metadata']['offset'],json_resp['metadata']['length']))
+    for vm in json_resp['entities']:
+        if vm['spec']['name'] == vm_name:
+            print("vm_uuid=", vm['metadata']['uuid'])
+            exit(0)
     while json_resp['metadata']['length'] is 20:
         payload = {
             "kind": "vm",
@@ -73,8 +75,11 @@ if resp.ok:
         )
         if resp.ok:
             json_resp = json.loads(resp.content)
-            print("Printing results from {} to {}".format(json_resp['metadata']['offset'],json_resp['metadata']['offset'] + json_resp['metadata']['length']))
-            print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
+            print("Processing results from {} to {}".format(json_resp['metadata']['offset'],json_resp['metadata']['offset'] + json_resp['metadata']['length']))
+            for vm in json_resp['entities']:
+                if vm['spec']['name'] == vm_name:
+                    print("vm_uuid=", vm['metadata']['uuid'])
+                    exit(0)
         else:
             print("Request failed")
             print("Headers: {}".format(headers))
