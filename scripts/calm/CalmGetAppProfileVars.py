@@ -15,11 +15,11 @@ username = "@@{pc_user.username}@@"
 username_secret = "@@{pc_user.secret}@@"
 blueprint_uuid = "@@{blueprint_uuid}@@"
 application_profile_name = "@@{application_profile_name}@@"
-vm_hostname = "@@{name}@@"
 # endregion
 
 # region prepare variables
 headers = {'content-type': 'application/json'}
+blueprint_app_profile_uuid = ""
 # endregion
 
 # region REST call: Get Blueprint
@@ -41,18 +41,18 @@ resp = urlreq(
 
 if resp.ok:
     json_resp = json.loads(resp.text)
-    blueprint_app_profile_uuid = json_resp['spec']['resources']['app_profile_list'][0]['uuid']
-    blueprint_app_profile_variables = json_resp['spec']['resources']['app_profile_list'][0]['variable_list']
+    blueprint_name = json_resp['status']['name']
+    for app_profile in json_resp['spec']['resources']['app_profile_list']:
+        if app_profile['name'] == application_profile_name:
+            blueprint_app_profile_uuid = app_profile['uuid']
+            blueprint_app_profile_variables = app_profile['variable_list']
 
-    print("blueprint_app_profile_uuid=", blueprint_app_profile_uuid)
-    print("blueprint_app_profile_variables=", blueprint_app_profile_variables)
-
-    for x in blueprint_app_profile_variables:
-        if x['name'] == ''+vm_hostname+'':
-            print("{}_var_uuid={}".format(vm_hostname, x['uuid']))
-        else:
-            continue
-    exit(0)
+            print("blueprint_app_profile_uuid=", blueprint_app_profile_uuid)
+            print("blueprint_app_profile_variables=", blueprint_app_profile_variables)
+            exit(0)
+        if blueprint_app_profile_uuid == "":
+            print("Could not find application profile with name {} in blueprint {}".format(application_profile_name,blueprint_name))
+            exit(1)
 else:
     print("Request failed")
     print("Headers: {}".format(headers))

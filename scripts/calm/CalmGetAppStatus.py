@@ -5,7 +5,6 @@
 # task_name:      CalmGetAppStatus
 # description:    This script loops on the status of an application instance
 # until it is running or in an error state.
-# TODO: test
 # endregion
 
 # region capture Calm macros
