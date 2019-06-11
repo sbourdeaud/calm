@@ -1,1 +1,1 @@
-Place scripts here which use the Prism Element or Prism Central API.
+Place scripts here which use the Prism Element (https://developer.nutanix.com/reference/prism_element/v2/) or Prism Central API (https://developer.nutanix.com/reference/prism_central/v3/).

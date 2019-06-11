@@ -1,1 +1,1 @@
-Place scripts here which use the EasyIP API.
+Place scripts here which use the EasyIP API (http://www.crypton.co.uk/readme/api.html).

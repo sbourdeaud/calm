@@ -1,20 +1,30 @@
 # region headers
 # escript-template v20190611 / stephane.bourdeaud@nutanix.com
-# * author:    stephane.bourdeaud@nutanix.com
-# * version:   2019/06/11 - v0.2
-# task_name: n/a (template)
-# notes:     Cisco ACI API documentation can be found here:
-#            https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/4-x/rest-api-config/Cisco-APIC-REST-API-Configuration-Guide-401.html
-#            As a general guideline, the object model of the API can be
-#            directly from the APIC UI. We also strongly encourage using the
-#            API inspector available in the APIC to figure out calls and
-#            payloads easily.
+# * author:     jose.gomez@nutanix.com, stephane.bourdeaud@nutanix.com
+# * version:    2019/06/11 - v1
+# task_name:    CiscoAciCreateBridgeDomain
+# description:  Creates a Cisco ACI Bridge Domain object in the specified
+#               VRF as well as a subnet, gateway and L3 out default route.
 # endregion
 
 # region capture Calm variables
-username = '@@{aci_user.username}@@'
+username = "@@{aci_user.username}@@"
 username_secret = "@@{aci_user.secret}@@"
 api_server = "@@{aci_ip}@@"
+aci_tenant_name = "@@{aci_tenant_name}@@"
+aci_bd_name = "@@{aci_bd_name}@@"
+aci_subnet = '@@{aci_subnet}@@'
+aci_subnet_mask = '@@{aci_subnet_mask}@@'
+aci_subnet_gw = '@@{aci_subnet_gw}@@'
+aci_vrf_name = '@@{aci_vrf_name}@@'
+aci_l3_out_name = '@@{aci_l3_out_name}@@'
+# endregion
+
+# region prepare variables
+aci_bd_dn = "uni/tn-{}/BD-{}".format(aci_tenant_name, aci_bd_name)
+aci_subnet_gw_ip = "{}/{}".format(aci_subnet_gw, aci_subnet_mask)
+aci_subnet_rn = "subnet-[{}]".format(aci_subnet_gw_ip)
+aci_subnet_dn = "{}/{}".format(aci_bd_dn, aci_subnet_rn)
 # endregion
 
 # region generic prepare api call
@@ -71,9 +81,9 @@ else:
     exit(1)
 # endregion
 
-# region do something
+# region POST new Bridge Domain
 # prepare
-api_server_endpoint = "/api/someendpoint.json"
+api_server_endpoint = "/api/node/mo/{}.json".format(aci_bd_dn)
 url = "https://{}:{}{}".format(
     api_server,
     api_server_port,
@@ -83,11 +93,67 @@ method = "POST"
 
 # Compose the json payload
 payload = {
-    "example": {
-        "example": {
-            "example": "example",
-            "example": "example"
-        }
+    "fvBD": {
+        "attributes": {
+            "OptimizeWanBandwidth": "no",
+            "annotation": "",
+            "arpFlood": "true",
+            "descr": "",
+            "dn": aci_bd_dn,
+            "epClear": "no",
+            "epMoveDetectMode": "",
+            "status": "created,modified",
+            "intersiteBumTrafficAllow": "no",
+            "intersiteL2Stretch": "no",
+            "ipLearning": "yes",
+            "limitIpLearnToSubnets": "yes",
+            "llAddr": "::",
+            "mcastAllow": "no",
+            "multiDstPktAct": "bd-flood",
+            "name": aci_bd_name,
+            "nameAlias": "",
+            "ownerKey": "",
+            "ownerTag": "",
+            "type": "regular",
+            "unicastRoute": "yes",
+            "unkMacUcastAct": "proxy",
+            "unkMcastAct": "flood",
+            "vmac": "not-applicable"
+        },
+        "children": [
+            {
+                "fvSubnet": {
+                    "attributes": {
+                        "dn": aci_subnet_dn,
+                        "ip": aci_subnet_gw_ip,
+                        "preferred": "true",
+                        "scope": "public",
+                        "ctrl": "unspecified",
+                        "rn": aci_subnet_rn,
+                        "status": "created,modified"
+                    },
+                    "children": []
+                }
+            },
+            {
+                "fvRsCtx": {
+                    "attributes": {
+                        "tnFvCtxName": aci_vrf_name,
+                        "status": "created,modified"
+                    },
+                    "children": []
+                }
+            },
+            {
+                "fvRsBDToOut": {
+                    "attributes": {
+                        "tnL3extOutName": aci_l3_out_name,
+                        "status": "created,modified"
+                    },
+                    "children": []
+                }
+            }
+        ]
     }
 }
 
@@ -104,7 +170,11 @@ resp = urlreq(
 
 # deal with the result/response
 if resp.ok:
-    print("Request was successful")
+    print("Request to add bridge domain {} in tenant {} was successful".format(
+        aci_bd_name,
+        aci_tenant_name
+        )
+    )
     print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
 else:
     print("Request failed")

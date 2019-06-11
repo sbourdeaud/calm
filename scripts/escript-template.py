@@ -18,13 +18,13 @@
 # endregion
 
 # region headers
-# escript-template v20190605 / stephane.bourdeaud@nutanix.com
+# escript-template v20190611 / stephane.bourdeaud@nutanix.com
 # TODO Fill in this section with your information
 # * author:     <your email address here>
 # * version:    <date / notes>
 # task_name:    <enter the name of the task this script is for as it appears
 # in your blueprint>
-# description:  
+# description:
 # endregion
 
 # region capture Calm variables
@@ -75,7 +75,7 @@ resp = urlreq(
 
 # ! You should not have to change the code below, unless you are passing on
 # ! a variable in which case you will need to print it under "if resp.ok"
-# ! example: print("calm_variable_name=", python_variable)
+# ! example: print("calm_variable_name={}".format(python_variable))
 # deal with the result/response
 if resp.ok:
     print("Request was successful")

@@ -1,20 +1,27 @@
 # region headers
 # escript-template v20190611 / stephane.bourdeaud@nutanix.com
-# * author:    stephane.bourdeaud@nutanix.com
-# * version:   2019/06/11 - v0.2
-# task_name: n/a (template)
-# notes:     Cisco ACI API documentation can be found here:
-#            https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/4-x/rest-api-config/Cisco-APIC-REST-API-Configuration-Guide-401.html
-#            As a general guideline, the object model of the API can be
-#            directly from the APIC UI. We also strongly encourage using the
-#            API inspector available in the APIC to figure out calls and
-#            payloads easily.
+# * author:     jose.gomez@nutanix.com, stephane.bourdeaud@nutanix.com
+# * version:    2019/06/11 - v1
+# task_name:    CiscoAciCreateSubnet
+# description:  Creates a Cisco ACI subnet object in the specified bridge
+#               domain and tenant.
 # endregion
 
 # region capture Calm variables
-username = '@@{aci_user.username}@@'
+username = "@@{aci_user.username}@@"
 username_secret = "@@{aci_user.secret}@@"
 api_server = "@@{aci_ip}@@"
+aci_tenant_name = "@@{aci_tenant_name}@@"
+aci_bd_name = "@@{aci_bd_name}@@"
+aci_subnet = "@@{aci_subnet}@@"
+# endregion
+
+# region prepare variables
+dn = "uni/tn-{}/BD-{}/subnet-[{}]".format(
+    aci_tenant_name,
+    aci_bd_name,
+    aci_subnet
+)
 # endregion
 
 # region generic prepare api call
@@ -71,9 +78,9 @@ else:
     exit(1)
 # endregion
 
-# region do something
+# region POST new subnet
 # prepare
-api_server_endpoint = "/api/someendpoint.json"
+api_server_endpoint = "/api/node/mo/{}.json".format(dn)
 url = "https://{}:{}{}".format(
     api_server,
     api_server_port,
@@ -83,10 +90,20 @@ method = "POST"
 
 # Compose the json payload
 payload = {
-    "example": {
-        "example": {
-            "example": "example",
-            "example": "example"
+    "fvSubnet": {
+        "attributes": {
+            "annotation": "",
+            "childAction": "",
+            "ctrl": "",
+            "descr": "",
+            "dn": dn,
+            "ip": aci_subnet,
+            "name": "",
+            "nameAlias": "",
+            "preferred": "no",
+            "scope": "private",
+            "status": "created,modified",
+            "virtual": "no"
         }
     }
 }
@@ -104,7 +121,7 @@ resp = urlreq(
 
 # deal with the result/response
 if resp.ok:
-    print("Request was successful")
+    print("Request to add subnet {} to bridge domain {} was successful")
     print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
 else:
     print("Request failed")
