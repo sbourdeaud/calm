@@ -2,17 +2,15 @@
 # escript-template v20190605 / stephane.bourdeaud@nutanix.com
 # * author:       Geluykens, Andy <Andy.Geluykens@pfizer.com>
 # * version:      2019/06/04
-# task_name:      RubrikAddSlaDomain
-# description:    This script adds an SLA domain to a VM in Rubrik.  Use
-# RubrikGetSlaDomainId and RubrikGetVmId before this task.
+# task_name:      RubrikGetVmId
+# description:    This script gets the specified VM object id from the Rubrik
+# server.
 # endregion
 
 # region capture Calm macros
 username = '@@{rubrik.username}@@'
 username_secret = "@@{rubrik.secret}@@"
 api_server = "@@{rubrik_ip}@@"
-rubrik_vm_id = "@@{rubrik_vm_id}@@"
-rubrik_sla_domain_id = "@@{rubrik_sla_domain_id}@@"
 # endregion
 
 # region prepare variables
@@ -21,19 +19,17 @@ headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
 }
+rubrik_vm_id = ""
 # endregion
 
-# region add sla domain (API call)
-api_server_endpoint = "/api/internal/nutanix/vm/{}".format(rubrik_vm_id)
+# region GET API call to retrieve the VM id
+api_server_endpoint = "/api/internal/nutanix/vm?name=@@{name}@@"
 url = "https://{}:{}{}".format(
     api_server,
     api_server_port,
     api_server_endpoint
 )
-method = "PATCH"
-payload = {
-    "configuredSlaDomainId": rubrik_sla_domain_id
-}
+method = "GET"
 
 print("Making a {} API call to {}".format(method, url))
 
@@ -49,7 +45,9 @@ resp = urlreq(
 )
 
 if resp.ok:
-    print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
+    json_resp = json.loads(resp.content)
+    vm_id = json_resp['data'][0]['id']
+    print("rubrik_vm_id={}".format(vm_id))
     exit(0)
 else:
     print("Request failed")

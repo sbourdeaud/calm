@@ -2,17 +2,17 @@
 # escript-template v20190605 / stephane.bourdeaud@nutanix.com
 # * author:       Geluykens, Andy <Andy.Geluykens@pfizer.com>
 # * version:      2019/06/04
-# task_name:      RubrikAddSlaDomain
-# description:    This script adds an SLA domain to a VM in Rubrik.  Use
-# RubrikGetSlaDomainId and RubrikGetVmId before this task.
+# task_name:      RubrikRefreshNtnxCluster
+# description:    This script refreshes the data displayed in Rubrik for the
+# specified Nutanix cluster (use RubrikGetClusterId to get the cluster id).
+# Follow up with RubrikWaitUntilClusterRefresh.
 # endregion
 
 # region capture Calm macros
 username = '@@{rubrik.username}@@'
 username_secret = "@@{rubrik.secret}@@"
 api_server = "@@{rubrik_ip}@@"
-rubrik_vm_id = "@@{rubrik_vm_id}@@"
-rubrik_sla_domain_id = "@@{rubrik_sla_domain_id}@@"
+rubrik_ntnx_cluster_id = "@@{rubrik_ntnx_cluster_id}@@"
 # endregion
 
 # region prepare variables
@@ -23,17 +23,14 @@ headers = {
 }
 # endregion
 
-# region add sla domain (API call)
-api_server_endpoint = "/api/internal/nutanix/vm/{}".format(rubrik_vm_id)
+# region POST API call to refresh the Nutanix cluster data in Rubrik
+api_server_endpoint = "/api/internal/nutanix/cluster/{}/refresh".format(rubrik_ntnx_cluster_id)
 url = "https://{}:{}{}".format(
     api_server,
     api_server_port,
     api_server_endpoint
 )
-method = "PATCH"
-payload = {
-    "configuredSlaDomainId": rubrik_sla_domain_id
-}
+method = "POST"
 
 print("Making a {} API call to {}".format(method, url))
 
@@ -43,13 +40,14 @@ resp = urlreq(
     auth='BASIC',
     user=username,
     passwd=username_secret,
-    params=json.dumps(payload),
     headers=headers,
     verify=False
 )
 
 if resp.ok:
-    print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
+    json_resp = json.loads(resp.content)
+    refresh_id = json_resp['id']
+    print("rubrik_refresh_id={}".format(refresh_id))
     exit(0)
 else:
     print("Request failed")

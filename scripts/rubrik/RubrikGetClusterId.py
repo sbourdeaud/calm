@@ -2,17 +2,16 @@
 # escript-template v20190605 / stephane.bourdeaud@nutanix.com
 # * author:       Geluykens, Andy <Andy.Geluykens@pfizer.com>
 # * version:      2019/06/04
-# task_name:      RubrikAddSlaDomain
-# description:    This script adds an SLA domain to a VM in Rubrik.  Use
-# RubrikGetSlaDomainId and RubrikGetVmId before this task.
+# task_name:      RubrikGetClusterId
+# description:    This script gets the specified Nutanix AHV cluster id from
+# the Rubrik server.
 # endregion
 
 # region capture Calm macros
 username = '@@{rubrik.username}@@'
 username_secret = "@@{rubrik.secret}@@"
 api_server = "@@{rubrik_ip}@@"
-rubrik_vm_id = "@@{rubrik_vm_id}@@"
-rubrik_sla_domain_id = "@@{rubrik_sla_domain_id}@@"
+nutanix_cluster_name = "@@{nutanix_cluster_name}@@"
 # endregion
 
 # region prepare variables
@@ -21,19 +20,17 @@ headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
 }
+rubrik_ntnx_cluster_id = ""
 # endregion
 
-# region add sla domain (API call)
-api_server_endpoint = "/api/internal/nutanix/vm/{}".format(rubrik_vm_id)
+# region GET API call to retrieve the Nutanix AHV cluster id from Rubrik
+api_server_endpoint = "/api/internal/nutanix/cluster"
 url = "https://{}:{}{}".format(
     api_server,
     api_server_port,
     api_server_endpoint
 )
-method = "PATCH"
-payload = {
-    "configuredSlaDomainId": rubrik_sla_domain_id
-}
+method = "GET"
 
 print("Making a {} API call to {}".format(method, url))
 
@@ -43,14 +40,23 @@ resp = urlreq(
     auth='BASIC',
     user=username,
     passwd=username_secret,
-    params=json.dumps(payload),
     headers=headers,
     verify=False
 )
 
 if resp.ok:
-    print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
-    exit(0)
+    json_resp = json.loads(resp.content)
+    for cluster in json_resp['data']:
+        if cluster['name'] == nutanix_cluster_name:
+            print("rubrik_ntnx_cluster_id={}".format(cluster['id']))
+            exit(0)
+    if rubrik_ntnx_cluster_id == "":
+        print("Could not find a Nutanix cluster with name {} on Rubrik server {}".format(
+            nutanix_cluster_name,
+            api_server
+            )
+        )
+        exit(1)
 else:
     print("Request failed")
     print("Headers: {}".format(headers))
