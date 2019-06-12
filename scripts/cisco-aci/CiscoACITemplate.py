@@ -105,6 +105,7 @@ resp = urlreq(
 # deal with the result/response
 if resp.ok:
     print("Request was successful")
+    print('Status code: {}'.format(resp.status_code))
     print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
 else:
     print("Request failed")

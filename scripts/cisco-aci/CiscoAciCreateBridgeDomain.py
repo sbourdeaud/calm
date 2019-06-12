@@ -175,6 +175,7 @@ if resp.ok:
         aci_tenant_name
         )
     )
+    print('Status code: {}'.format(resp.status_code))
     print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
 else:
     print("Request failed")

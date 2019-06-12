@@ -1,10 +1,9 @@
 # region headers
 # escript-template v20190611 / stephane.bourdeaud@nutanix.com
 # * author:     jose.gomez@nutanix.com, stephane.bourdeaud@nutanix.com
-# * version:    2019/06/11 - v1
-# task_name:    CiscoAciCreateEpg
-# description:  Creates a Cisco ACI EPG object in the specified tenant and
-#               bridge domain.
+# * version:    2019/06/12 - v1
+# task_name:    CiscoAciAddVmmDomainToEpg
+# description:  Adds the specified VMM Domain to the designated Cisco ACI EPG.
 # endregion
 
 # region capture Calm variables
@@ -14,7 +13,7 @@ api_server = "@@{aci_ip}@@"
 aci_tenant_name = "@@{aci_tenant_name}@@"
 aci_ap_name = "@@{aci_ap_name}@@"
 aci_epg_name = "@@{aci_epg_name}@@"
-aci_bd_name = "@@{aci_bd_name}@@"
+aci_vmm_domain = "@@{aci_vmm_domain}@@"
 # endregion
 
 # region prepare variables
@@ -23,7 +22,7 @@ dn = "uni/tn-{}/ap-{}/epg-{}".format(
     aci_ap_name,
     aci_epg_name
 )
-rn = "epg-{}".format(aci_epg_name)
+tDn = "uni/vmmp-VMware/dom-{}".format(aci_vmm_domain)
 # endregion
 
 # region generic prepare api call
@@ -80,7 +79,7 @@ else:
     exit(1)
 # endregion
 
-# region POST new EPG (endpoint group)
+# region POST VMM domain to EPG
 # prepare
 api_server_endpoint = "/api/node/mo/{}.json".format(dn)
 url = "https://{}:{}{}".format(
@@ -92,23 +91,13 @@ method = "POST"
 
 # Compose the json payload
 payload = {
-    "fvAEPg": {
+    "fvRsDomAtt": {
         "attributes": {
-            "dn": dn,
-            "name": aci_epg_name,
-            "rn": rn, "status": "created,modified"
+            "resImedcy": "immediate",
+            "tDn": tDn,
+            "status": "created,modified"
         },
-        "children": [
-            {
-                "fvRsBd": {
-                    "attributes": {
-                        "tnFvBDName": aci_bd_name,
-                        "status": "created,modified"
-                    },
-                    "children": []
-                }
-            }
-        ]
+        "children": []
     }
 }
 
@@ -125,12 +114,11 @@ resp = urlreq(
 
 # deal with the result/response
 if resp.ok:
-    print("Request to add EPG {} under application profile {} in bridge domain {} in tenant {} was successful".format(
-        aci_epg_name,
-        aci_ap_name,
-        aci_bd_name,
-        aci_tenant_name
-    ))
+    print("Request to add VMM Domain {} to EPG {} was successful".format(
+        aci_vmm_domain,
+        aci_epg_name
+        )
+    )
     print('Status code: {}'.format(resp.status_code))
     print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
 else:
