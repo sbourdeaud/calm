@@ -54,7 +54,7 @@ resp = urlreq(
 # deal with the result/response
 if resp.ok:
     json_resp = json.loads(resp.content)
-    print("Printing results from {} to {}".format(json_resp['metadata']['offset'],json_resp['metadata']['length']))
+    print("Printing results from {} to {}".format(json_resp['metadata']['offset'], json_resp['metadata']['length']))
     print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
     while json_resp['metadata']['length'] is 20:
         payload = {
@@ -73,7 +73,7 @@ if resp.ok:
         )
         if resp.ok:
             json_resp = json.loads(resp.content)
-            print("Printing results from {} to {}".format(json_resp['metadata']['offset'],json_resp['metadata']['offset'] + json_resp['metadata']['length']))
+            print("Printing results from {} to {}".format(json_resp['metadata']['offset'], json_resp['metadata']['offset'] + json_resp['metadata']['length']))
             print('Response: {}'.format(json.dumps(json.loads(resp.content), indent=4)))
         else:
             print("Request failed")
