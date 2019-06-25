@@ -44,12 +44,14 @@ $headers = @{
     "Content-Type"="application/json";
     "Accept"="application/json"
 }
+$length=100 #this specifies how many entities we want in the results of each API query
 
 
 # this is used to capture the content of the payload
 $content = @{
     kind="vm";
-    offset=0
+    offset=0;
+    length=$length
 }
 $payload = (ConvertTo-Json $content -Depth 4)
 
@@ -95,26 +97,35 @@ Write-Host "$(Get-Date) [INFO] Adding Tls12 support"
 #endregion
 
 #region make api call
-try {
-    Write-Host "$(Get-Date) [INFO] Making a $method call to $url"
-    $resp = Invoke-RestMethod -Method $method -Uri $url -Headers $headers `
-        -Body $payload -ErrorAction Stop
-    Write-Host "$(Get-Date) [INFO] Response Metadata: $($resp.metadata | ConvertTo-Json)"
-    # response data will be an array in $resp.entities
-    Write-Host "$(Get-Date) [INFO] Showing entities in response:"
-    ForEach ($entity in $resp.entities) {
-        $entity | Format-List #expose the data structure of entities
+Write-Host "$(Get-Date) [INFO] Making a $method call to $url"
+Do {
+    try {
+        $resp = Invoke-RestMethod -Method $method -Uri $url -Headers $headers `
+            -Body $payload -ErrorAction Stop
+        Write-Host "$(Get-Date) [INFO] Processing results from $($resp.metadata.offset) to $($resp.metadata.offset + $resp.metadata.length)"
+        Write-Host "$(Get-Date) [INFO] Response Metadata: $($resp.metadata | ConvertTo-Json)"
+        # response data will be an array in $resp.entities
+        Write-Host "$(Get-Date) [INFO] Showing entities in response:"
+        ForEach ($entity in $resp.entities) {
+            $entity | Format-List #expose the data structure of entities
+        }
+        #prepare the json payload for the next batch of entities/response
+        $content = @{
+            kind="vm";
+            offset=($resp.metadata.length + $resp.metadata.offset);
+            length=$length
+        }
+        $payload = (ConvertTo-Json $content -Depth 4)
+    }
+    catch {
+        $saved_error = $_.Exception.Message
+        # Write-Host "$(Get-Date) [INFO] Headers: $($headers | ConvertTo-Json)"
+        Write-Host "$(Get-Date) [INFO] Payload: $payload"
+        Throw "$(get-date) [ERROR] $saved_error"
+    }
+    finally {
+        #add any last words here; this gets processed no matter what
     }
 }
-catch {
-    $saved_error = $_.Exception.Message
-    # Write-Host "$(Get-Date) [INFO] Headers: $($headers | ConvertTo-Json)"
-    Write-Host "$(Get-Date) [INFO] Payload: $payload"
-    Throw "$(get-date) [ERROR] $saved_error"
-}
-finally {
-    #add any last words here; this gets processed no matter what
-    Write-Host "$(Get-Date) [INFO] Response variable structure:"
-    $resp | Format-List
-}
+While ($resp.metadata.length -eq $length)
 #endregion
