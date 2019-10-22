@@ -2,37 +2,31 @@
 # escript-template v20190605 / stephane.bourdeaud@nutanix.com
 # * author:     stephane.bourdeaud@nutanix.com
 # * version:    20191022
-# task_name:    PcGetVmUuid
-# description:  Gets the uuid of the specified VMs from Prism Central.
-# output:       vm_uuid
+# task_name:    PeGetImageUuid
+# description:  Gets the uuid of the specified image from Prism Element.
+# output:       image_uuid, image_vm_disk_id
 # endregion
 
 # region capture Calm variables
 username = "@@{pc.username}@@"
 username_secret = "@@{pc.secret}@@"
-api_server = "@@{pc_ip}@@"
-vm_name = "@@{vm_name}@@"
+api_server = "@@{pe_ip}@@"
+image_name = "@@{image_name}@@"
 # endregion
 
 # region prepare api call
 # Form method, url and headers for the API call
 api_server_port = "9440"
-api_server_endpoint = "/api/nutanix/v3/vms/list"
+api_server_endpoint = "/PrismGateway/services/rest/v2.0/images/"
 url = "https://{}:{}{}".format(
     api_server,
     api_server_port,
     api_server_endpoint
 )
-method = "POST"
+method = "GET"
 headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
-}
-
-# Compose the json payload
-payload = {
-    "kind": "vm",
-    "filter": "vm_name == {}".format(vm_name) 
 }
 # endregion
 
@@ -46,7 +40,6 @@ resp = urlreq(
     auth='BASIC',
     user=username,
     passwd=username_secret,
-    params=json.dumps(payload),
     headers=headers,
     verify=False
 )
@@ -54,10 +47,12 @@ resp = urlreq(
 # deal with the result/response
 if resp.ok:
     json_resp = json.loads(resp.content)
-    for vm in json_resp['entities']:
-        print "vm_uuid = {}".format(vm['metadata']['uuid'])
-        exit(0)
-    print("No vm found!")
+    for image in json_resp['entities']:
+        if image['name'] == image_name:
+            print "image_uuid = {}".format(image['uuid'])
+            print "image_vm_disk_id = {}".format(image['vm_disk_id'])
+            exit(0)
+    print("Image not found!")
     exit(1)
 else:
     # print the content of the response (which should have the error message)
@@ -66,6 +61,5 @@ else:
         indent=4
     ))
     print("Headers: {}".format(headers))
-    print("Payload: {}".format(payload))
     exit(1)
 # endregion

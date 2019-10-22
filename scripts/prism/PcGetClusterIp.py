@@ -4,6 +4,7 @@
 # * version:    20190606
 # task_name:    PcGetClusterIp
 # description:  Gets the IP address of the specified cluster.
+# output:       nutanix_cluster_ip
 # endregion
 
 # region capture Calm variables
@@ -48,7 +49,7 @@ if resp.ok:
     json_resp = json.loads(resp.content)
     for cluster in json_resp['entities']:
         if cluster['spec']['name'] == nutanix_cluster_name:
-            print("nutanix_cluster_ip=", cluster['spec']['resources']['network']['external_ip'])
+            print "nutanix_cluster_ip={}".format(cluster['spec']['resources']['network']['external_ip'])
     exit(0)
 else:
     print("Request failed")
